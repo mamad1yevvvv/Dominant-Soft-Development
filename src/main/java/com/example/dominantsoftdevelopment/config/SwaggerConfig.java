@@ -35,7 +35,7 @@ public class SwaggerConfig {
                         .termsOfService("http://swagger.io/terms/"))
                 .externalDocs(new ExternalDocumentation()
                         .description("SpringShop Wiki Documentation")
-                        .url("https://github.com/Dominant-Soft-Development/Dominant-Soft-Development"))
+                        .url("https://github.com/mamad1yevvvv/Dominant-Soft-Development"))
                 .servers(List.of(
                         new Server()
 //                                .url("http://localhost:8080/")
