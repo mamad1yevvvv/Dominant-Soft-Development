@@ -15,15 +15,5 @@ public class TokenDTO {
     private String refreshToken;
     @Builder.Default
     private final String tokenType = AppConstants.BEARER_TYPE;
-
-    private Address address;
-    private Status status;
-    private Roles roles;
-    private Attachment attachment;
-    private String phoneNumber;
-    private String email;
-    private String firstName;
-    private String lastName;
-    private String firebaseToken;
-    private boolean accountNonLocked = true;
+    private UserDTO userDTO;
 }
