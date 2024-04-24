@@ -9,7 +9,7 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ProductFuturesDTO {
+public class ProductFeaturesDTO {
     ProductFeatureNameDTO productFeatureName;
     ProductFeatureValueDTO productFutureValue;
     String value;
