@@ -57,7 +57,9 @@ public class AuthServiceImpl implements AuthService {
     public ApiResult<TokenDTO> login(LoginDTO loginDTO) {
         User user1 = checkCredential(loginDTO.phoneNumber(), loginDTO.password());
 
-        return ApiResult.successResponse(generateTokenDTO(user1));
+        TokenDTO tokenDTO = generateTokenDTO(user1);
+        tokenDTO.setUserDTO(modelMapper.map(user1, UserDTO.class));
+        return ApiResult.successResponse(tokenDTO);
     }
 
     @Override
