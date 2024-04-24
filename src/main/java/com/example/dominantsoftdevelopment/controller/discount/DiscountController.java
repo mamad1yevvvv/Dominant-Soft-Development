@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,6 +21,7 @@ public class DiscountController {
 
     private final DiscountService discountService;
 
+    @PreAuthorize(value = "hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
     @PostMapping
     public HttpEntity<ApiResult<Boolean>> createDiscount(@RequestBody @Valid AddDiscountDTO discountDTO) {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(discountService.createDiscount(discountDTO));

@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,6 +30,7 @@ public class ProductController {
         return ResponseEntity.ok(productService.add(addProductDTO));
     }
 
+    @PreAuthorize(value = "hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
     @DeleteMapping("/delete/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public HttpEntity<ApiResult<Boolean>> delete(@PathVariable Long id){
