@@ -23,17 +23,17 @@ import java.util.Collections;
 @Table(name = "users")
 public class User extends BaseModel implements UserDetails {
 
-//    @Column(nullable = false)
+    @Column(nullable = false)
     private String firstName;
 
     private String lastName;
 
-//    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true)
     private String phoneNumber;
 
     private String email;
 
-//    @Column(nullable = false)
+    @Column(nullable = false)
     private String password;
 
     @Builder.Default
