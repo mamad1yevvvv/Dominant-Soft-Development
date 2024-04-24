@@ -1,10 +1,7 @@
 package com.example.dominantsoftdevelopment.service.auth;
 
 import com.example.dominantsoftdevelopment.config.jwtFilter.JWTProvider;
-import com.example.dominantsoftdevelopment.dto.ApiResult;
-import com.example.dominantsoftdevelopment.dto.LoginDTO;
-import com.example.dominantsoftdevelopment.dto.RegisterDTO;
-import com.example.dominantsoftdevelopment.dto.TokenDTO;
+import com.example.dominantsoftdevelopment.dto.*;
 import com.example.dominantsoftdevelopment.exceptions.RestException;
 import com.example.dominantsoftdevelopment.model.User;
 import com.example.dominantsoftdevelopment.model.enums.Roles;
@@ -15,6 +12,8 @@ import com.example.dominantsoftdevelopment.repository.UserRepository;
 import com.example.dominantsoftdevelopment.service.SendSMS.SendSMSService;
 import com.example.dominantsoftdevelopment.service.emailService.EmailService;
 import com.example.dominantsoftdevelopment.utils.AppConstants;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -36,27 +35,28 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final JWTProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
-    private final AttachmentRepository attachmentRepository;
     private final SendSMSService sendSMSService;
     private final OTPRepository otpRepository;
+    private final ModelMapper modelMapper;
 
     public AuthServiceImpl(UserRepository userRepository,
                            @Lazy AuthenticationManager authenticationManager,
                            PasswordEncoder passwordEncoder, JWTProvider jwtProvider,
                            AttachmentRepository attachmentRepository, SendSMSService sendSMSService,
-                           OTPRepository otpRepository) {
+                           OTPRepository otpRepository, ModelMapper modelMapper) {
         this.userRepository = userRepository;
         this.authenticationManager = authenticationManager;
         this.jwtProvider = jwtProvider;
         this.passwordEncoder = passwordEncoder;
-        this.attachmentRepository = attachmentRepository;
         this.sendSMSService = sendSMSService;
         this.otpRepository = otpRepository;
+        this.modelMapper = modelMapper;
     }
 
     @Override
     public ApiResult<TokenDTO> login(LoginDTO loginDTO) {
         User user1 = checkCredential(loginDTO.phoneNumber(), loginDTO.password());
+
         return ApiResult.successResponse(generateTokenDTO(user1));
     }
 
@@ -116,8 +116,9 @@ public class AuthServiceImpl implements AuthService {
                 .build();
         userRepository.save(user);
 
-        return ApiResult.successResponse(generateTokenDTO(user));
-
+        TokenDTO tokenDTO = generateTokenDTO(user);
+        tokenDTO.setUserDTO(modelMapper.map(user, UserDTO.class));
+        return ApiResult.successResponse(tokenDTO);
     }
 
 
