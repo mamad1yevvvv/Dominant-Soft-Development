@@ -61,8 +61,14 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public ApiResult<Boolean> add(AddCategoryDTO addCategoryDTO) {
-        Attachment attachment = attachmentRepository.findById(addCategoryDTO.getAttachmentId()).orElse(null);
-        Category category = categoryRepository.findById(addCategoryDTO.getCategoryId()).orElse(null);
+        Attachment attachment = null;
+        Category category  = null;
+        if (addCategoryDTO.getAttachmentId()!=null){
+            attachment = attachmentRepository.findById(addCategoryDTO.getAttachmentId()).orElseThrow(() -> RestException.restThrow("Photo not found ",HttpStatus.NO_CONTENT));
+        }
+        if (addCategoryDTO.getCategoryId()!=null){
+            category = categoryRepository.findById(addCategoryDTO.getCategoryId()).orElseThrow(() -> RestException.restThrow("Parent Category not Found",HttpStatus.NO_CONTENT));
+        }
 
         Category category1 = Category.builder()
                 .name(addCategoryDTO.getName())

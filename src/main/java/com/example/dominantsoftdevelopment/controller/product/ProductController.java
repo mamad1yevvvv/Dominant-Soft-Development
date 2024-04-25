@@ -3,8 +3,11 @@ package com.example.dominantsoftdevelopment.controller.product;
 import com.example.dominantsoftdevelopment.dto.AddProductDTO;
 import com.example.dominantsoftdevelopment.dto.ApiResult;
 import com.example.dominantsoftdevelopment.dto.ProductDTOList;
+import com.example.dominantsoftdevelopment.dto.ResponseFeatureDTO;
 import com.example.dominantsoftdevelopment.service.product.ProductService;
+import com.google.protobuf.Api;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -36,4 +39,10 @@ public class ProductController {
     public HttpEntity<ApiResult<Boolean>> delete(@PathVariable Long id){
         return ResponseEntity.ok(productService.delete(id));
     }
+
+    @GetMapping("/all-fieldByCategoryId")
+    public HttpEntity<ApiResult<List<ResponseFeatureDTO>>> getAll(@Valid @NotNull Long categoryId){
+        return ResponseEntity.ok(productService.allFields(categoryId));
+    }
+
 }

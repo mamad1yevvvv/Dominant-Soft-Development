@@ -1,9 +1,6 @@
 package com.example.dominantsoftdevelopment.service.product;
 
-import com.example.dominantsoftdevelopment.dto.AddProductDTO;
-import com.example.dominantsoftdevelopment.dto.ApiResult;
-import com.example.dominantsoftdevelopment.dto.ProductDTOList;
-import com.example.dominantsoftdevelopment.dto.ProductFeaturesDTO;
+import com.example.dominantsoftdevelopment.dto.*;
 import com.example.dominantsoftdevelopment.exceptions.RestException;
 import com.example.dominantsoftdevelopment.model.Product;
 import com.example.dominantsoftdevelopment.model.ProductFeatureName;
@@ -16,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -92,5 +90,27 @@ public class ProductServiceImpl implements ProductService {
     public ApiResult<Boolean> delete(Long id) {
         productRepository.findById(id).ifPresent(value -> value.setDeleted(true));
         return ApiResult.successResponse(true);
+    }
+
+
+    @Override
+    public ApiResult<List<ResponseFeatureDTO>> allFields(Long categoryId) {
+        List<ResponseFeatureDTO> responseFeatureDTOS = new ArrayList<>();
+
+        for (ProductFeatureName name : productFeaturesNameRepository.findByCategory_Id(categoryId)) {
+            ResponseFeatureDTO featureDTO = ResponseFeatureDTO.builder()
+                    .isSelectable(false)
+                    .productFeatureValueDTOList(null)
+                    .productFeatureNameDTO(mapper.map(name, ProductFeatureNameDTO.class)).build();
+            List<ProductFeatureValue> nameId = productFeatureValueRepository.findByProductFeatureName_Id(name.getId());
+            if (!nameId.isEmpty()){
+                featureDTO.setProductFeatureValueDTOList(nameId.stream().map(productFeatureValue -> mapper.map(productFeatureValue,ProductFeatureValueDTO.class)).toList());
+                featureDTO.setSelectable(true);
+            }
+            
+            responseFeatureDTOS.add(featureDTO);
+        }
+
+        return ApiResult.successResponse(responseFeatureDTOS);
     }
 }
