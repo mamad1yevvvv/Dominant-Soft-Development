@@ -27,11 +27,12 @@ public class CategoryServiceImpl implements CategoryService {
     public ApiResult<List<CategoryDTO>> all() {
         List<CategoryDTO> categoryDTOList = new ArrayList<>();
         for (Category category : categoryRepository.findByParentCategoryIsNullAndDeletedFalse()) {
+            List<CategoryDTO> childCategory = findChildCategory(category.getId());
             CategoryDTO categoryDTO = CategoryDTO.builder()
                     .id(category.getId())
                     .name(category.getName())
                     .attachment(category.getAttachment())
-                    .categoryDTOList(findChildCategory(category.getId()))
+                    .categoryDTOList(childCategory)
                     .build();
             categoryDTOList.add(categoryDTO);
         }
@@ -43,16 +44,18 @@ public class CategoryServiceImpl implements CategoryService {
         List<CategoryDTO> categoryDTOList = new ArrayList<>();
 
         for (Category category : categoryRepository.findByParentCategoryIdAndDeletedFalse(parentCategoryId)) {
-
+            System.out.println("cc = "+category);
             List<CategoryDTO> categoryDTOS = null;
 
-            if (category.getParentCategory() != null)
+            if (category.getParentCategory().getId() != null){
                 categoryDTOS = findChildCategory(category.getId());
+            }
 
             CategoryDTO categoryDTO = mapper.map(category, CategoryDTO.class);
 
-            if (category.getParentCategory() != null)
+            if (category.getParentCategory().getId() != null){
                 categoryDTO.setCategoryDTOList(categoryDTOS);
+            }
 
             categoryDTOList.add(categoryDTO);
         }

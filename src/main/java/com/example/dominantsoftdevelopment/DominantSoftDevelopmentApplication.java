@@ -7,15 +7,15 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 @RequiredArgsConstructor
-public class DominantSoftDevelopmentApplication implements CommandLineRunner {
+public class DominantSoftDevelopmentApplication /*implements CommandLineRunner*/ {
     private final MockDataGenerator mockDataGenerator;
     public static void main(String[] args) {
         SpringApplication.run(DominantSoftDevelopmentApplication.class, args);
     }
 
 
-    @Override
+   /* @Override
     public void run(String... args) throws Exception {
         mockDataGenerator.generate();
-    }
+    }*/
 }

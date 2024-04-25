@@ -107,7 +107,7 @@ public class ProductServiceImpl implements ProductService {
                 featureDTO.setProductFeatureValueDTOList(nameId.stream().map(productFeatureValue -> mapper.map(productFeatureValue,ProductFeatureValueDTO.class)).toList());
                 featureDTO.setSelectable(true);
             }
-            
+
             responseFeatureDTOS.add(featureDTO);
         }
 
