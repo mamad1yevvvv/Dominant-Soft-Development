@@ -1,9 +1,6 @@
 package com.example.dominantsoftdevelopment.service.user;
 
-import com.example.dominantsoftdevelopment.dto.ApiResult;
-import com.example.dominantsoftdevelopment.dto.EmailUpdateDTO;
-import com.example.dominantsoftdevelopment.dto.UserDTO;
-import com.example.dominantsoftdevelopment.dto.UserUpdateDTO;
+import com.example.dominantsoftdevelopment.dto.*;
 import com.example.dominantsoftdevelopment.exceptions.RestException;
 import com.example.dominantsoftdevelopment.model.User;
 import com.example.dominantsoftdevelopment.model.enums.Status;
@@ -18,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +30,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final OTPRepository otpRepository;
+    private final PasswordEncoder passwordEncoder;
 
 
     @Transactional
@@ -111,6 +110,22 @@ public class UserService {
 
         User user = CommonUtils.getCurrentUserFromContext();
         user.setEmail(updateDTO.newEmail());
+        userRepository.save(user);
+        return ApiResult.successResponse(true);
+    }
+
+    public ApiResult<Boolean> resetPassword(UserResetPasswordDTO resetPasswordDTO) {
+        String email = resetPasswordDTO.email();
+        OTP otp = otpRepository.findByEmail(email)
+                .orElseThrow(() -> RestException.restThrow("Email not found or  wrong email code", HttpStatus.BAD_REQUEST));
+        if (otp.getSendTime().plusMinutes(3).isBefore(LocalDateTime.now())){
+            throw RestException.restThrow("Code expired",HttpStatus.BAD_REQUEST);
+        }
+        if (!resetPasswordDTO.smsCode().equals(Integer.parseInt(otp.getCode()))){
+            throw RestException.restThrow("Wrong sms code", HttpStatus.BAD_REQUEST);
+        }
+        User user = userRepository.findByEmail(email).orElseThrow(() -> RestException.restThrow("User not found", HttpStatus.BAD_REQUEST));
+        user.setPassword(passwordEncoder.encode(resetPasswordDTO.password()));
         userRepository.save(user);
         return ApiResult.successResponse(true);
     }

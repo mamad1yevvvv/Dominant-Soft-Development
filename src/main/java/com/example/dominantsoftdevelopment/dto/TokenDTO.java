@@ -1,8 +1,5 @@
 package com.example.dominantsoftdevelopment.dto;
-import com.example.dominantsoftdevelopment.model.Address;
-import com.example.dominantsoftdevelopment.model.Attachment;
-import com.example.dominantsoftdevelopment.model.enums.Roles;
-import com.example.dominantsoftdevelopment.model.enums.Status;
+
 import com.example.dominantsoftdevelopment.utils.AppConstants;
 import lombok.Builder;
 import lombok.Data;
