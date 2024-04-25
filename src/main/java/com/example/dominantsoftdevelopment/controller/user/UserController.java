@@ -1,12 +1,10 @@
 package com.example.dominantsoftdevelopment.controller.user;
 
-import com.example.dominantsoftdevelopment.dto.ApiResult;
-import com.example.dominantsoftdevelopment.dto.EmailUpdateDTO;
-import com.example.dominantsoftdevelopment.dto.UserDTO;
-import com.example.dominantsoftdevelopment.dto.UserUpdateDTO;
+import com.example.dominantsoftdevelopment.dto.*;
 import com.example.dominantsoftdevelopment.model.User;
 import com.example.dominantsoftdevelopment.service.user.UserService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -49,6 +47,10 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userservice.changeEmail(updateDTO));
     }
 
+    @PostMapping("/forget/password")
+    public ResponseEntity<ApiResult<Boolean>> resetPassword(@RequestBody @Valid UserResetPasswordDTO resetPasswordDTO){
+        return ResponseEntity.ok(userservice.resetPassword(resetPasswordDTO));
+    }
 
     @MessageMapping("/user.addUser")
     @SendTo("/user/public")

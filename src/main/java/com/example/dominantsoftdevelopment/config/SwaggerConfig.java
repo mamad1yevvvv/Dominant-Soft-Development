@@ -26,8 +26,7 @@ public class SwaggerConfig {
                         .description("Spring 6 Swagger Simple Application")
                         .version("${api.version}")
                         .contact(new Contact()
-                                .name("Dominat Soft Devlopment")
-                                .email("mamadiyevsayyod5@gmail.coxm")
+                                .name("Dominant Soft Development")
                         )
                         .license(new License()
                                 .name("Apache 2.0")
@@ -38,7 +37,7 @@ public class SwaggerConfig {
                         .url("https://github.com/mamad1yevvvv/Dominant-Soft-Development"))
                 .servers(List.of(
                         new Server()
-//                                .url("http://localhost:8080/")
+//                                .url("http://localhost:9090/")
                                 .url("https://dominant-soft-development.up.railway.app")
                                 .description("Production")
                 )).addSecurityItem(new SecurityRequirement().addList("bearerAuth"))

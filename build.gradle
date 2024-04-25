@@ -40,7 +40,7 @@ dependencies {
     runtimeOnly 'org.springframework.boot:spring-boot-devtools'
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation 'org.springframework.boot:spring-boot-starter-mail'
-
+    implementation 'net.datafaker:datafaker:2.1.0'
     implementation 'com.google.firebase:firebase-admin:9.2.0'
 
 }

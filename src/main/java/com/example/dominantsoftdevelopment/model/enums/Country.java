@@ -1,7 +1,6 @@
 package com.example.dominantsoftdevelopment.model.enums;
 
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.List;
 
@@ -57,7 +56,6 @@ public enum Country {
             "Karakol"));
 
 
-    @Setter
     private List<String> region;
 
     Country(List<String> region) {
