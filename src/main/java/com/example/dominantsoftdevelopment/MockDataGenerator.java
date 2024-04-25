@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 @Component
@@ -45,20 +46,24 @@ public class MockDataGenerator {
         }
 
         categoryRepository.deleteAll();
-
+        List <Long> ids = new ArrayList<>();
         for (int i = 0; i < parentCategories.length; i++) {
             Category category = new Category();
             category.setName(parentCategories[i]);
             category.setParentCategory(null);
             category.setAttachment(null);
             categoryRepository.save(category);
+            ids.add(category.getId());
         }
+
 
         for (int i = 0; i < 20; i++) {
             Category category = new Category();
             category.setName(faker.commerce().productName());
+            int randomIndex = new Random().nextInt(ids.size());
+            Long randomId = ids.get(randomIndex);
             category.setParentCategory(categoryRepository
-                    .findById(new Random().nextLong(1, parentCategories.length-1))
+                    .findById(randomId)
                     .orElse(category));
             category.setAttachment(null);
             categoryRepository.save(category);
