@@ -30,7 +30,14 @@ public class UserController {
     public ResponseEntity<UserDTO> profile(@PathVariable Long id){
         return ResponseEntity.status(HttpStatus.OK).body(userservice.profile(id));
     }
-
+    @GetMapping("/exist-phone")
+    public ResponseEntity<Boolean> existPhoneNumber(@Valid @RequestParam String phone){
+        return ResponseEntity.ok(userservice.checkPhone(phone));
+    }
+    @GetMapping("/exist-email")
+    public ResponseEntity<Boolean> existEmail(@RequestParam @Email String email){
+        return ResponseEntity.ok(userservice.checkEmail(email));
+    }
     @GetMapping("/list")
     public HttpEntity<ApiResult<Page<UserDTO>>> getDiscount(Pageable pageable, @RequestParam(required = false) String predicate) {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(userservice.getAll(pageable, predicate));

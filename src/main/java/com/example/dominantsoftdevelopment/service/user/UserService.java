@@ -129,6 +129,14 @@ public class UserService {
         userRepository.save(user);
         return ApiResult.successResponse(true);
     }
+
+    public Boolean checkPhone(String phone) {
+        return userRepository.existsByPhoneNumber(phone);
+    }
+
+    public Boolean checkEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
 }
 
 
