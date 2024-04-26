@@ -94,13 +94,18 @@ public class AuthServiceImpl implements AuthService {
         }
         */
 
-        // authenticating with email
-        OTP otp = otpRepository.findByEmail(registerDTO.email())
-                .orElseThrow(() -> RestException.restThrow("Email not found or  wrong email code", HttpStatus.BAD_REQUEST));
 
         if (userRepository.findByEmail(registerDTO.email()).isPresent()){
             throw RestException.restThrow("User already exsist",HttpStatus.BAD_REQUEST);
         }
+        if (userRepository.findByPhoneNumber(registerDTO.phoneNumber()).isPresent()){
+            throw RestException.restThrow("User already exsist",HttpStatus.BAD_REQUEST);
+        }
+
+        // authenticating with email
+        OTP otp = otpRepository.findByEmail(registerDTO.email())
+                .orElseThrow(() -> RestException.restThrow("Email not found or  wrong email code", HttpStatus.BAD_REQUEST));
+
         if (!registerDTO.code().equals(Integer.parseInt(otp.getCode()))){
             throw RestException.restThrow("Wrong sms code", HttpStatus.BAD_REQUEST);
         }

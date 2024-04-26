@@ -10,6 +10,8 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ProductFeaturesDTO {
+    @Builder.Default
+    Long id = null;
     ProductFeatureNameDTO productFeatureName;
     ProductFeatureValueDTO productFutureValue;
     String value;

@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface ProductFeaturesRepository extends JpaRepository<ProductFeatures,Long> {
     List<ProductFeatures> findByProduct_IdAndDeletedFalse(Long id);
+    List<ProductFeatures> findByProduct_Id(Long product_id);
 }

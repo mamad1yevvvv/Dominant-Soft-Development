@@ -2,10 +2,7 @@ package com.example.dominantsoftdevelopment.service.product;
 
 import com.example.dominantsoftdevelopment.dto.*;
 import com.example.dominantsoftdevelopment.exceptions.RestException;
-import com.example.dominantsoftdevelopment.model.Product;
-import com.example.dominantsoftdevelopment.model.ProductFeatureName;
-import com.example.dominantsoftdevelopment.model.ProductFeatureValue;
-import com.example.dominantsoftdevelopment.model.ProductFeatures;
+import com.example.dominantsoftdevelopment.model.*;
 import com.example.dominantsoftdevelopment.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -15,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -63,7 +61,6 @@ public class ProductServiceImpl implements ProductService {
         productRepository.save(product);
 
         for (ProductFeaturesDTO productFeaturesDTO : addProductDTO.getProductFeaturesDTOS()) {
-            System.out.println(productFeaturesDTO.getProductFeatureName().getId());
             ProductFeatureName productFeatureName = productFeaturesNameRepository.findById(productFeaturesDTO.getProductFeatureName().getId())
                     .orElseThrow(() -> RestException.restThrow("product feature not found", HttpStatus.BAD_REQUEST));
 
@@ -83,6 +80,42 @@ public class ProductServiceImpl implements ProductService {
             }
             productFeaturesRepository.save(productFeatures);
         }
+        return ApiResult.successResponse(true);
+    }
+
+    @Override
+    @Transactional
+    public ApiResult<Boolean> update(Long id, AddProductDTO updateProductDTO) {
+        Product product = productRepository.findByIdAndDeletedFalse(id).orElseThrow(() -> RestException.restThrow("Product not found", HttpStatus.NO_CONTENT));
+        List<ProductFeatures> featuresList = productFeaturesRepository.findByProduct_Id(id);
+        List<Attachment> attachments = attachmentRepository.findAllById(updateProductDTO.getAttachmentIds());
+        Category category = categoryRepository.findByIdAndDeletedFalse(updateProductDTO.getProductCategory()).orElseThrow(() -> RestException.restThrow("Category not found",HttpStatus.NO_CONTENT));
+        User seller = userRepository.findById(updateProductDTO.getSellerId()).orElseThrow(() -> RestException.restThrow("Seller user not found", HttpStatus.NO_CONTENT));
+
+        product.setProductName(updateProductDTO.getProductName());
+        product.setConditionProduct(updateProductDTO.getConditionProduct());
+        product.setDescription(updateProductDTO.getDescription());
+        product.setPrice(updateProductDTO.getPrice());
+        product.setPayType(updateProductDTO.getPayType());
+        product.setAttachment(attachments);
+        product.setProductCategory(category);
+        product.setSeller(seller);
+        productRepository.save(product);
+
+        if(!featuresList.isEmpty()){
+            for (ProductFeatures productFeatures : featuresList) {
+
+                ProductFeaturesDTO featuresDTO = updateProductDTO.getProductFeaturesDTOS().stream()
+                        .filter(pr -> pr.getId().equals(productFeatures.getId())).findFirst().orElseThrow(() -> RestException.restThrow("Bunday feature mavjud emas", HttpStatus.NO_CONTENT));
+
+                productFeatures.setProduct(product);
+                productFeatures.setProductFeatureName(mapper.map(featuresDTO.getProductFeatureName(),ProductFeatureName.class));
+                productFeatures.setValue(featuresDTO.getValue());
+                productFeatures.setProductFutureValue(mapper.map(featuresDTO.getProductFutureValue(),ProductFeatureValue.class));
+                productFeaturesRepository.save(productFeatures);
+            }
+        }
+
         return ApiResult.successResponse(true);
     }
 

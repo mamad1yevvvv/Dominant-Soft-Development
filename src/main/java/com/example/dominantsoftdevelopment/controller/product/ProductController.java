@@ -28,10 +28,19 @@ public class ProductController {
         return ResponseEntity.ok(productService.list());
     }
 
+    @PreAuthorize(value = "hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
     @PostMapping
     public HttpEntity<ApiResult<Boolean>> add(@Valid @RequestBody AddProductDTO addProductDTO){
         return ResponseEntity.ok(productService.add(addProductDTO));
     }
+
+    @PreAuthorize(value = "hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
+    @PutMapping("/update/{id}")
+    public HttpEntity<ApiResult<Boolean>> update(@Valid @NotNull @PathVariable Long id,@RequestBody AddProductDTO updateProductDTO){
+        return ResponseEntity.ok(productService.update(id,updateProductDTO));
+    }
+
+
 
     @PreAuthorize(value = "hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
     @DeleteMapping("/delete/{id}")

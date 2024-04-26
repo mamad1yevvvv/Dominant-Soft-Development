@@ -15,4 +15,6 @@ public interface ProductService {
     ApiResult<Boolean> delete(Long id);
 
     ApiResult<List<ResponseFeatureDTO>> allFields(Long categoryId);
+
+    ApiResult<Boolean> update(Long id, AddProductDTO updateProductDTO);
 }
