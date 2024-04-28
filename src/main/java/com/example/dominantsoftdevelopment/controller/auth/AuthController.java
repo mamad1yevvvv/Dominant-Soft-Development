@@ -1,9 +1,6 @@
 package com.example.dominantsoftdevelopment.controller.auth;
 
-import com.example.dominantsoftdevelopment.dto.ApiResult;
-import com.example.dominantsoftdevelopment.dto.LoginDTO;
-import com.example.dominantsoftdevelopment.dto.RegisterDTO;
-import com.example.dominantsoftdevelopment.dto.TokenDTO;
+import com.example.dominantsoftdevelopment.dto.*;
 import com.example.dominantsoftdevelopment.utils.AppConstants;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
@@ -18,6 +15,8 @@ public interface AuthController {
     String REGISTER_PATH = "/register";
     String SEND_EMAIL = "/email";
     String SEND_SMS = "/sms";
+    String EXIST_EMAIL = "/exist-email";
+    String EXIST_PHONE = "/exist-phone";
 
     @PostMapping(LOGIN_PATH)
     HttpEntity<ApiResult<TokenDTO>> login(@Valid @RequestBody LoginDTO loginDTO);
@@ -36,6 +35,12 @@ public interface AuthController {
 
     @PostMapping(SEND_SMS)
     HttpEntity<ApiResult<Boolean>> sendSMS(@RequestParam String phoneNumber);
+
+    @GetMapping(EXIST_EMAIL)
+    HttpEntity<Boolean> existByEmail(@Valid @RequestBody EmailDTO emailDTO);
+
+    @GetMapping(EXIST_PHONE)
+    HttpEntity<Boolean> existByPhone(@Valid @RequestBody PhoneDTO phoneDTO);
 
 
 
