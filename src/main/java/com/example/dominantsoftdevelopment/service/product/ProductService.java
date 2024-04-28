@@ -16,5 +16,7 @@ public interface ProductService {
 
     ApiResult<List<ResponseFeatureDTO>> allFields(Long categoryId);
 
+    Boolean isCreator(Long id, String username);
+
     ApiResult<Boolean> update(Long id, AddProductDTO updateProductDTO);
 }

@@ -40,10 +40,8 @@ public class ProductController {
         return ResponseEntity.ok(productService.update(id,updateProductDTO));
     }
 
-
-
-    @PreAuthorize(value = "hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
     @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN') or @productServiceImpl.isCreator(#id, principal.username)")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public HttpEntity<ApiResult<Boolean>> delete(@PathVariable Long id){
         return ResponseEntity.ok(productService.delete(id));

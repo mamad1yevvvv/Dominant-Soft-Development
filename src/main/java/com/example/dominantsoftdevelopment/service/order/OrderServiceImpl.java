@@ -6,6 +6,7 @@ import com.example.dominantsoftdevelopment.model.OrderItem;
 import com.example.dominantsoftdevelopment.model.Orders;
 import com.example.dominantsoftdevelopment.model.Product;
 import com.example.dominantsoftdevelopment.model.User;
+import com.example.dominantsoftdevelopment.model.enums.Roles;
 import com.example.dominantsoftdevelopment.repository.OrderItemRepository;
 import com.example.dominantsoftdevelopment.repository.OrderRepository;
 import com.example.dominantsoftdevelopment.repository.ProductRepository;
@@ -13,6 +14,7 @@ import com.example.dominantsoftdevelopment.repository.UserRepository;
 import com.example.dominantsoftdevelopment.utils.CommonUtils;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -65,7 +67,11 @@ public class OrderServiceImpl implements OrderService {
         Orders order = orderRepository
                 .findById(orderId)
                 .orElseThrow(() -> RestException.restThrow("Order not found"));
-
+        User user = CommonUtils.getCurrentUserFromContext();
+        //||
+        if (!order.getCustomer().getId().equals(user.getId()) && !user.getRoles().equals(Roles.ADMIN)) {
+            throw RestException.restThrow("Forbidden (NO WAY)", HttpStatus.FORBIDDEN);
+        }
         List<OrderItem> items = getOrderItemsByOrderId(order);
         List<OrderItemDTO> list = items.stream()
                 .map(orderItem -> modelMapper.map(orderItem, OrderItemDTO.class))
@@ -120,5 +126,12 @@ public class OrderServiceImpl implements OrderService {
         order.setDeleted(true);
         orderRepository.save(order);
         return ApiResult.successResponse(true);
+    }
+
+    @Override
+    public Boolean isOwner(Long orderId, String username) {
+        Orders order = orderRepository.findById(orderId)
+                .orElseThrow(() -> RestException.restThrow("Order not found"));
+        return order.getCustomer().getUsername().equals(username);
     }
 }

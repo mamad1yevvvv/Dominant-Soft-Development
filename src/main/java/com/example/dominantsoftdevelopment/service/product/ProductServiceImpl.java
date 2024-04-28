@@ -33,9 +33,7 @@ public class ProductServiceImpl implements ProductService {
                 .map(product -> mapper.map(product, ProductDTOList.class)).toList();
 
         for (ProductDTOList productDTOList : list) {
-
             List<ProductFeatures> productFeatures = productFeaturesRepository.findByProduct_IdAndDeletedFalse(productDTOList.getId());
-            System.out.println(productFeatures);
             productDTOList.setProductDTOLists(productFeatures.stream()
                     .map(productFeatures1 -> mapper.map(productFeatures1, ProductFeaturesDTO.class)).toList());
         }
@@ -122,7 +120,6 @@ public class ProductServiceImpl implements ProductService {
                 productFeaturesRepository.save(productFeatures);
             }
         }
-
         return ApiResult.successResponse(true);
     }
 
@@ -152,5 +149,12 @@ public class ProductServiceImpl implements ProductService {
         }
 
         return ApiResult.successResponse(responseFeatureDTOS);
+    }
+
+    @Override
+    public Boolean isCreator(Long id, String username) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> RestException.restThrow("product not found", HttpStatus.BAD_REQUEST));
+        return product.getSeller().getUsername().equals(username);
     }
 }

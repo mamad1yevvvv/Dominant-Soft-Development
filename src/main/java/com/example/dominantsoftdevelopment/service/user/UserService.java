@@ -130,6 +130,12 @@ public class UserService {
         return ApiResult.successResponse(true);
     }
 
+    public Boolean isOwner(Long id, String username){
+        User user = userRepository.findByPhoneNumber(username)
+                .orElseThrow(() -> RestException.restThrow("User not found", HttpStatus.BAD_REQUEST));
+        return user.getId().equals(id);
+    }
+
 }
 
 
