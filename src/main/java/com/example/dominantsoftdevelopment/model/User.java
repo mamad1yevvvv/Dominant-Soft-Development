@@ -63,7 +63,7 @@ public class User extends BaseModel implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(new SimpleGrantedAuthority(roles.name()));
+        return Collections.singleton(new SimpleGrantedAuthority("ROLE_"+roles.name()));
     }
 
     @Override

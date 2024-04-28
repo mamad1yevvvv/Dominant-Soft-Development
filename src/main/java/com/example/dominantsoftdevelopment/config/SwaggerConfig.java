@@ -37,8 +37,8 @@ public class SwaggerConfig {
                         .url("https://github.com/mamad1yevvvv/Dominant-Soft-Development"))
                 .servers(List.of(
                         new Server()
-//                                .url("http://localhost:9090/")
-                                .url("https://dominant-soft-development.up.railway.app")
+                                .url("http://localhost:9090/")
+//                                .url("https://dominant-soft-development.up.railway.app")
                                 .description("Production")
                 )).addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
                 .components(new Components()

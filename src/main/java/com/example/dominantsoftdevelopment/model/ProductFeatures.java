@@ -12,12 +12,13 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
+@ToString
 public class ProductFeatures extends BaseModel {
     @OneToOne
     Product product;
-    @OneToOne
+    @ManyToOne
     ProductFeatureName productFeatureName;
-    @OneToOne
+    @ManyToOne
     ProductFeatureValue productFutureValue;
     String value;
 }

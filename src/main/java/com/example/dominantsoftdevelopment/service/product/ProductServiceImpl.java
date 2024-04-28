@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +33,9 @@ public class ProductServiceImpl implements ProductService {
                 .map(product -> mapper.map(product, ProductDTOList.class)).toList();
 
         for (ProductDTOList productDTOList : list) {
+
             List<ProductFeatures> productFeatures = productFeaturesRepository.findByProduct_IdAndDeletedFalse(productDTOList.getId());
+            System.out.println(productFeatures);
             productDTOList.setProductDTOLists(productFeatures.stream()
                     .map(productFeatures1 -> mapper.map(productFeatures1, ProductFeaturesDTO.class)).toList());
         }
@@ -60,25 +61,31 @@ public class ProductServiceImpl implements ProductService {
                         .orElseThrow(() -> RestException.restThrow("category not found", HttpStatus.BAD_REQUEST))).build();
         productRepository.save(product);
 
-        for (ProductFeaturesDTO productFeaturesDTO : addProductDTO.getProductFeaturesDTOS()) {
-            ProductFeatureName productFeatureName = productFeaturesNameRepository.findById(productFeaturesDTO.getProductFeatureName().getId())
-                    .orElseThrow(() -> RestException.restThrow("product feature not found", HttpStatus.BAD_REQUEST));
 
-            ProductFeatures productFeatures = ProductFeatures.builder()
-                    .product(product)
-                    .productFeatureName(productFeatureName)
-                    .build();
+        if (!addProductDTO.getProductFeaturesDTOS().isEmpty()) {
+            for (ProductFeaturesDTO productFeaturesDTO : addProductDTO.getProductFeaturesDTOS()) {
 
-            if (productFeaturesDTO.getProductFutureValue() != null) {
-                ProductFeatureValue productFeatureValue = ProductFeatureValue.builder()
+                ProductFeatureName productFeatureName = productFeaturesNameRepository.findById(productFeaturesDTO.getProductFeatureName().getId())
+                        .orElseThrow(() -> RestException.restThrow("product feature not found", HttpStatus.BAD_REQUEST));
+
+                ProductFeatures productFeatures = ProductFeatures.builder()
+                        .product(product)
                         .productFeatureName(productFeatureName)
-                        .value(productFeaturesDTO.getProductFutureValue().getValue()).build();
-                productFeatureValueRepository.save(productFeatureValue);
-                productFeatures.setProductFutureValue(productFeatureValue);
-            } else {
-                productFeatures.setValue(productFeaturesDTO.getValue());
+                        .build();
+
+                System.out.println("productFeaturesDTO.getProductFutureValue() = " + productFeaturesDTO.getProductFutureValue());
+                if (productFeaturesDTO.getProductFutureValue() != null) {
+                    ProductFeatureValue productFeatureValue = ProductFeatureValue.builder()
+                            .productFeatureName(productFeatureName)
+                            .value(productFeaturesDTO.getProductFutureValue().getValue()).build();
+                    productFeatureValueRepository.save(productFeatureValue);
+                    productFeatures.setProductFutureValue(productFeatureValue);
+                } else {
+                    productFeatures.setValue(productFeaturesDTO.getValue());
+                }
+                productFeaturesRepository.save(productFeatures);
             }
-            productFeaturesRepository.save(productFeatures);
+
         }
         return ApiResult.successResponse(true);
     }
@@ -89,7 +96,7 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findByIdAndDeletedFalse(id).orElseThrow(() -> RestException.restThrow("Product not found", HttpStatus.NO_CONTENT));
         List<ProductFeatures> featuresList = productFeaturesRepository.findByProduct_Id(id);
         List<Attachment> attachments = attachmentRepository.findAllById(updateProductDTO.getAttachmentIds());
-        Category category = categoryRepository.findByIdAndDeletedFalse(updateProductDTO.getProductCategory()).orElseThrow(() -> RestException.restThrow("Category not found",HttpStatus.NO_CONTENT));
+        Category category = categoryRepository.findByIdAndDeletedFalse(updateProductDTO.getProductCategory()).orElseThrow(() -> RestException.restThrow("Category not found", HttpStatus.NO_CONTENT));
         User seller = userRepository.findById(updateProductDTO.getSellerId()).orElseThrow(() -> RestException.restThrow("Seller user not found", HttpStatus.NO_CONTENT));
 
         product.setProductName(updateProductDTO.getProductName());
@@ -102,16 +109,16 @@ public class ProductServiceImpl implements ProductService {
         product.setSeller(seller);
         productRepository.save(product);
 
-        if(!featuresList.isEmpty()){
+        if (!featuresList.isEmpty()) {
             for (ProductFeatures productFeatures : featuresList) {
 
                 ProductFeaturesDTO featuresDTO = updateProductDTO.getProductFeaturesDTOS().stream()
                         .filter(pr -> pr.getId().equals(productFeatures.getId())).findFirst().orElseThrow(() -> RestException.restThrow("Bunday feature mavjud emas", HttpStatus.NO_CONTENT));
 
                 productFeatures.setProduct(product);
-                productFeatures.setProductFeatureName(mapper.map(featuresDTO.getProductFeatureName(),ProductFeatureName.class));
+                productFeatures.setProductFeatureName(mapper.map(featuresDTO.getProductFeatureName(), ProductFeatureName.class));
                 productFeatures.setValue(featuresDTO.getValue());
-                productFeatures.setProductFutureValue(mapper.map(featuresDTO.getProductFutureValue(),ProductFeatureValue.class));
+                productFeatures.setProductFutureValue(mapper.map(featuresDTO.getProductFutureValue(), ProductFeatureValue.class));
                 productFeaturesRepository.save(productFeatures);
             }
         }
@@ -136,8 +143,8 @@ public class ProductServiceImpl implements ProductService {
                     .productFeatureValueDTOList(null)
                     .productFeatureNameDTO(mapper.map(name, ProductFeatureNameDTO.class)).build();
             List<ProductFeatureValue> nameId = productFeatureValueRepository.findByProductFeatureName_Id(name.getId());
-            if (!nameId.isEmpty()){
-                featureDTO.setProductFeatureValueDTOList(nameId.stream().map(productFeatureValue -> mapper.map(productFeatureValue,ProductFeatureValueDTO.class)).toList());
+            if (!nameId.isEmpty()) {
+                featureDTO.setProductFeatureValueDTOList(nameId.stream().map(productFeatureValue -> mapper.map(productFeatureValue, ProductFeatureValueDTO.class)).toList());
                 featureDTO.setSelectable(true);
             }
 

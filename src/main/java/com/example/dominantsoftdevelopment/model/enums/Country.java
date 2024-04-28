@@ -56,7 +56,7 @@ public enum Country {
             "Karakol"));
 
 
-    private List<String> region;
+    private final List<String> region;
 
     Country(List<String> region) {
         this.region = region;
