@@ -54,4 +54,13 @@ public class ProductController {
         return ResponseEntity.ok(productService.allFields(categoryId));
     }
 
+    @GetMapping("/active-product")
+    public HttpEntity<ApiResult<List<ProductDTOList>>> getActiveProductBySellerId(){
+        return ResponseEntity.ok(productService.getActiveProductByUserId());
+    }
+    @GetMapping("/noactive-product")
+    public HttpEntity<ApiResult<List<ProductDTOList>>> getNoActiveProductBySellerId(){
+        return ResponseEntity.ok(productService.getNoActiveProductByUserId());
+    }
+
 }

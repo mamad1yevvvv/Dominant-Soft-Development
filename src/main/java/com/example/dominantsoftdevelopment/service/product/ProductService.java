@@ -17,4 +17,8 @@ public interface ProductService {
     ApiResult<List<ResponseFeatureDTO>> allFields(Long categoryId);
 
     ApiResult<Boolean> update(Long id, AddProductDTO updateProductDTO);
+
+    ApiResult<List<ProductDTOList>> getActiveProductByUserId();
+
+    ApiResult<List<ProductDTOList>> getNoActiveProductByUserId();
 }

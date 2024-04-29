@@ -4,6 +4,7 @@ import com.example.dominantsoftdevelopment.dto.*;
 import com.example.dominantsoftdevelopment.exceptions.RestException;
 import com.example.dominantsoftdevelopment.model.*;
 import com.example.dominantsoftdevelopment.repository.*;
+import com.example.dominantsoftdevelopment.utils.CommonUtils;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -144,7 +145,8 @@ public class ProductServiceImpl implements ProductService {
                     .productFeatureNameDTO(mapper.map(name, ProductFeatureNameDTO.class)).build();
             List<ProductFeatureValue> nameId = productFeatureValueRepository.findByProductFeatureName_Id(name.getId());
             if (!nameId.isEmpty()) {
-                featureDTO.setProductFeatureValueDTOList(nameId.stream().map(productFeatureValue -> mapper.map(productFeatureValue, ProductFeatureValueDTO.class)).toList());
+                featureDTO.setProductFeatureValueDTOList(nameId.stream()
+                        .map(productFeatureValue -> mapper.map(productFeatureValue, ProductFeatureValueDTO.class)).toList());
                 featureDTO.setSelectable(true);
             }
 
@@ -152,5 +154,44 @@ public class ProductServiceImpl implements ProductService {
         }
 
         return ApiResult.successResponse(responseFeatureDTOS);
+    }
+
+
+    @Override
+    public ApiResult<List<ProductDTOList>> getActiveProductByUserId() {
+        User user = CommonUtils.getCurrentUserFromContext();
+        List<ProductDTOList> productDTOLists = new ArrayList<>();
+        for (Product product : productRepository.findBySellerIdAndDeletedFalse(user.getId())) {
+           productDTOLists.add(parse(product));
+        }
+        return ApiResult.successResponse(productDTOLists);
+    }
+
+    @Override
+    public ApiResult<List<ProductDTOList>> getNoActiveProductByUserId() {
+        User user = CommonUtils.getCurrentUserFromContext();
+        List<ProductDTOList> productDTOLists = new ArrayList<>();
+        for (Product product : productRepository.findBySellerIdAndDeletedTrue(user.getId())) {
+            productDTOLists.add(parse(product));
+        }
+        return ApiResult.successResponse(productDTOLists);
+    }
+
+    private ProductDTOList parse(Product product) {
+        return ProductDTOList.builder()
+                .id(product.getId())
+                .productName(product.getProductName())
+                .price(product.getPrice())
+                .productCategory(product.getProductCategory())
+                .conditionProduct(product.getConditionProduct())
+                .payType(product.getPayType())
+                .seller(mapper.map(product.getSeller(), UserDTO.class))
+                .attachment(product.getAttachment())
+                .description(product.getDescription())
+                .availability(product.getAvailability())
+                .productDTOLists(productFeaturesRepository.findByProduct_IdAndDeletedFalse(product.getId()).stream()
+                        .map(p -> mapper.map(p, ProductFeaturesDTO.class)).toList())
+                .build();
+
     }
 }
