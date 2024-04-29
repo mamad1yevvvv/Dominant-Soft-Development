@@ -12,7 +12,6 @@ import com.example.dominantsoftdevelopment.repository.UserRepository;
 import com.example.dominantsoftdevelopment.service.SendSMS.SendSMSService;
 import com.example.dominantsoftdevelopment.service.emailService.EmailService;
 import com.example.dominantsoftdevelopment.utils.AppConstants;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
@@ -55,10 +54,10 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public ApiResult<TokenDTO> login(LoginDTO loginDTO) {
-        User user1 = checkCredential(loginDTO.phoneNumber(), loginDTO.password());
+        User user = checkCredential(loginDTO.phoneNumber(), loginDTO.password());
 
-        TokenDTO tokenDTO = generateTokenDTO(user1);
-        tokenDTO.setUserDTO(modelMapper.map(user1, UserDTO.class));
+        TokenDTO tokenDTO = generateTokenDTO(user);
+        tokenDTO.setUserDTO(modelMapper.map(user, UserDTO.class));
         return ApiResult.successResponse(tokenDTO);
     }
 

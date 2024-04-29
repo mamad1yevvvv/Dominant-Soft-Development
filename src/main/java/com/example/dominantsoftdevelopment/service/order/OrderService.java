@@ -16,6 +16,6 @@ public interface OrderService {
 
     ApiResult<Boolean> delete(Long orderId);
 
-
+    Boolean isOwner(Long userId, String username);
 //    ApiResult<List<OrderItemDTO>> getOrderItems(Long orderId);
 }

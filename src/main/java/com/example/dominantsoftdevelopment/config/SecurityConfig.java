@@ -1,5 +1,6 @@
 package com.example.dominantsoftdevelopment.config;
 import com.example.dominantsoftdevelopment.config.jwtFilter.JWTFilter;
+import com.example.dominantsoftdevelopment.config.jwtFilter.JwtAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -25,7 +26,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, JwtAuthenticationEntryPoint authenticationEntryPoint) throws Exception {
 
         httpSecurity.authorizeHttpRequests(matcherRegistry -> {
             matcherRegistry.requestMatchers("/api/auth/**").permitAll();
@@ -36,7 +37,7 @@ public class SecurityConfig {
         httpSecurity.csrf(AbstractHttpConfigurer::disable);
         httpSecurity.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         httpSecurity.cors(AbstractHttpConfigurer::disable);
-
+        httpSecurity.exceptionHandling(entryPoint -> entryPoint.authenticationEntryPoint(authenticationEntryPoint));
         return httpSecurity.build();
     }
 

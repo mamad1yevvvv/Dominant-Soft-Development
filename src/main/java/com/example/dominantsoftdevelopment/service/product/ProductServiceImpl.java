@@ -47,6 +47,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public ApiResult<Boolean> add(AddProductDTO addProductDTO) {
+
         Product product = Product.builder()
                 .price(addProductDTO.getPrice())
                 .availability(addProductDTO.getAvailability())
@@ -154,8 +155,7 @@ public class ProductServiceImpl implements ProductService {
                     .productFeatureNameDTO(mapper.map(name, ProductFeatureNameDTO.class)).build();
             List<ProductFeatureValue> nameId = productFeatureValueRepository.findByProductFeatureName_Id(name.getId());
             if (!nameId.isEmpty()) {
-                featureDTO.setProductFeatureValueDTOList(nameId.stream()
-                        .map(productFeatureValue -> mapper.map(productFeatureValue, ProductFeatureValueDTO.class)).toList());
+                featureDTO.setProductFeatureValueDTOList(nameId.stream().map(productFeatureValue -> mapper.map(productFeatureValue, ProductFeatureValueDTO.class)).toList());
                 featureDTO.setSelectable(true);
             }
 
@@ -202,5 +202,12 @@ public class ProductServiceImpl implements ProductService {
                         .map(p -> mapper.map(p, ProductFeaturesDTO.class)).toList())
                 .build();
 
+    }
+
+    @Override
+    public Boolean isCreator(Long id, String username) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> RestException.restThrow("product not found", HttpStatus.BAD_REQUEST));
+        return product.getSeller().getUsername().equals(username);
     }
 }

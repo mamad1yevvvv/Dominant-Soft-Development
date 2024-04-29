@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,18 +26,20 @@ public class UserController {
 
     private final UserService userservice;
 
-
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN') or @userService.isOwner(#id, principal.username)")
     public ResponseEntity<UserDTO> profile(@PathVariable Long id){
         return ResponseEntity.status(HttpStatus.OK).body(userservice.profile(id));
     }
 
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     @GetMapping("/list")
-    public HttpEntity<ApiResult<Page<UserDTO>>> getDiscount(Pageable pageable, @RequestParam(required = false) String predicate) {
+    public HttpEntity<ApiResult<Page<UserDTO>>> getUsers(Pageable pageable, @RequestParam(required = false) String predicate) {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(userservice.getAll(pageable, predicate));
     }
 
     @PutMapping("/edit/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN') or @userService.isOwner(#id, principal.username)")
     public ResponseEntity<ApiResult<Boolean>>edit(@PathVariable Long id,
                                          @Valid @RequestBody UserUpdateDTO updateDTO){
         return ResponseEntity.status(HttpStatus.OK).body(userservice.edit(id, updateDTO));
