@@ -96,7 +96,7 @@ public class ProductServiceImpl implements ProductService {
             List<Attachment> attachments = new ArrayList<>();
 
             for (Long attachmentId : attachmentIds)
-                attachments.add(attachmentRepository.findById(attachmentId).orElseThrow(() -> RestException.restThrow("attachment not found = "+ attachmentId,HttpStatus.NO_CONTENT)));
+                attachments.add(attachmentRepository.findById(attachmentId).orElseThrow(() -> RestException.restThrow("attachment not found = "+ attachmentId,HttpStatus.BAD_REQUEST)));
 
             return attachments;
     }
@@ -104,11 +104,11 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public ApiResult<Boolean> update(Long id, AddProductDTO updateProductDTO) {
-        Product product = productRepository.findByIdAndDeletedFalse(id).orElseThrow(() -> RestException.restThrow("Product not found", HttpStatus.NO_CONTENT));
+        Product product = productRepository.findByIdAndDeletedFalse(id).orElseThrow(() -> RestException.restThrow("Product not found", HttpStatus.BAD_REQUEST));
         List<ProductFeatures> featuresList = productFeaturesRepository.findByProduct_Id(id);
         List<Attachment> attachments = attachmentRepository.findAllById(updateProductDTO.getAttachmentIds());
-        Category category = categoryRepository.findByIdAndDeletedFalse(updateProductDTO.getProductCategory()).orElseThrow(() -> RestException.restThrow("Category not found", HttpStatus.NO_CONTENT));
-        User seller = userRepository.findById(updateProductDTO.getSellerId()).orElseThrow(() -> RestException.restThrow("Seller user not found", HttpStatus.NO_CONTENT));
+        Category category = categoryRepository.findByIdAndDeletedFalse(updateProductDTO.getProductCategory()).orElseThrow(() -> RestException.restThrow("Category not found", HttpStatus.NOT_FOUND));
+        User seller = userRepository.findById(updateProductDTO.getSellerId()).orElseThrow(() -> RestException.restThrow("Seller user not found", HttpStatus.NOT_FOUND));
 
         product.setProductName(updateProductDTO.getProductName());
         product.setConditionProduct(updateProductDTO.getConditionProduct());
