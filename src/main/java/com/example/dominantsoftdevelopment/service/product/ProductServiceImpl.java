@@ -47,7 +47,6 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public ApiResult<Boolean> add(AddProductDTO addProductDTO) {
-
         Product product = Product.builder()
                 .price(addProductDTO.getPrice())
                 .availability(addProductDTO.getAvailability())
@@ -55,7 +54,7 @@ public class ProductServiceImpl implements ProductService {
                 .productName(addProductDTO.getProductName())
                 .description(addProductDTO.getDescription())
                 .payType(addProductDTO.getPayType())
-                .attachment(attachmentRepository.findAllById(addProductDTO.getAttachmentIds()))
+                .attachment(findAttachments(addProductDTO.getAttachmentIds()))
                 .seller(userRepository.findById(addProductDTO.getSellerId()).orElseThrow(() -> RestException
                         .restThrow("Seller user not found", HttpStatus.BAD_REQUEST)))
                 .productCategory(categoryRepository.findByIdAndDeletedFalse(addProductDTO.getProductCategory())
@@ -89,6 +88,16 @@ public class ProductServiceImpl implements ProductService {
 
         }
         return ApiResult.successResponse(true);
+
+    }
+
+    private List<Attachment> findAttachments(List<Long> attachmentIds) {
+            List<Attachment> attachments = new ArrayList<>();
+
+            for (Long attachmentId : attachmentIds)
+                attachments.add(attachmentRepository.findById(attachmentId).orElseThrow(() -> RestException.restThrow("attachment not found = "+ attachmentId,HttpStatus.NO_CONTENT)));
+
+            return attachments;
     }
 
     @Override
