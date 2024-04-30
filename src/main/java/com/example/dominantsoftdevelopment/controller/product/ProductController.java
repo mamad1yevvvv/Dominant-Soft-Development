@@ -60,5 +60,4 @@ public class ProductController {
     public HttpEntity<ApiResult<List<ProductDTOList>>> getNoActiveProductBySellerId(){
         return ResponseEntity.ok(productService.getNoActiveProductByUserId());
     }
-
 }

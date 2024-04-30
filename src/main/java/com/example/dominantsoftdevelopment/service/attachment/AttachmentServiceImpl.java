@@ -5,8 +5,10 @@ import com.example.dominantsoftdevelopment.dto.AttachmentDTO;
 import com.example.dominantsoftdevelopment.exceptions.RestException;
 import com.example.dominantsoftdevelopment.model.Attachment;
 import com.example.dominantsoftdevelopment.repository.AttachmentRepository;
+import com.google.protobuf.Api;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -143,4 +145,17 @@ public record AttachmentServiceImpl(AttachmentRepository attachmentRepository,
                 .build();
     }
 
+    @Override
+    public HttpEntity<ApiResult<Boolean>> delete(Long id) {
+        Attachment attachment = attachmentRepository.findById(id).orElse(null);
+        if (attachment!=null){
+            try {
+                Files.delete(Path.of(attachment.getContentURL()));
+                attachmentRepository.deleteById(attachment.getId());
+            } catch (IOException e) {
+                throw RestException.restThrow("path not found",HttpStatus.BAD_REQUEST);
+            }
+        }
+        return ResponseEntity.ok(ApiResult.successResponse(true));
+    }
 }

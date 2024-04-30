@@ -63,7 +63,7 @@ public class ProductServiceImpl implements ProductService {
         productRepository.save(product);
 
 
-        if (!addProductDTO.getProductFeaturesDTOS().isEmpty()) {
+        if (addProductDTO.getProductFeaturesDTOS()!=null) {
             for (ProductFeaturesDTO productFeaturesDTO : addProductDTO.getProductFeaturesDTOS()) {
 
                 ProductFeatureName productFeatureName = productFeaturesNameRepository.findById(productFeaturesDTO.getProductFeatureName().getId())
