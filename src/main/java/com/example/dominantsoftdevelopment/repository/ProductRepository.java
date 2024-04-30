@@ -20,7 +20,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query(nativeQuery = true, value = """
                  select year,count(*) from
-                 (select extract(year from p.updated_at) as year from product p) as ss
+                 (select extract(year from p.created_at) as year from product p) as ss
                  group by ss.year
                     """)
     List<Product> getProductYear();
