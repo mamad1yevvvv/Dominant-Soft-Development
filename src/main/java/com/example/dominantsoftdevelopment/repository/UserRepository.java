@@ -1,6 +1,7 @@
 package com.example.dominantsoftdevelopment.repository;
 
 import com.example.dominantsoftdevelopment.model.User;
+import com.example.dominantsoftdevelopment.model.enums.Country;
 import com.example.dominantsoftdevelopment.model.enums.Status;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -16,7 +17,7 @@ public interface UserRepository extends JpaRepository<User, Long> , JpaSpecifica
     Optional<User> findByEmail(String email);
 
     List<User> findAllByStatus(Status status);
-
+    List<User> findUserByAddress_Country(Country country);
 
     boolean existsByPhoneNumber(String phoneNumber);
     boolean existsByEmail(String email);
