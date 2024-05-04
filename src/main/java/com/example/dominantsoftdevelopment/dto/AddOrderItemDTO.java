@@ -13,6 +13,6 @@ public class AddOrderItemDTO {
 
     private Double price;
 
-    private Integer productCount;
+//    private Integer productCount;
 
 }

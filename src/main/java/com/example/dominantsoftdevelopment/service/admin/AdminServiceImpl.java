@@ -147,4 +147,9 @@ public class AdminServiceImpl  implements AdminService{
 
         return ApiResult.successResponse(userByAddressCountry);
     }
+
+    @Override
+    public ApiResult<List<User>> all(Country country) {
+        return null;
+    }
 }
