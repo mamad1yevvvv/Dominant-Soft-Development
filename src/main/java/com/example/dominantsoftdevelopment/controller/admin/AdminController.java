@@ -3,16 +3,19 @@ package com.example.dominantsoftdevelopment.controller.admin;
 import com.example.dominantsoftdevelopment.dto.ApiResult;
 import com.example.dominantsoftdevelopment.model.Product;
 import com.example.dominantsoftdevelopment.model.User;
+import com.example.dominantsoftdevelopment.model.enums.Country;
 import com.example.dominantsoftdevelopment.service.admin.AdminService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
 public class AdminController {
 
     private final AdminService adminService;
@@ -46,6 +49,7 @@ public class AdminController {
     public HttpEntity<ApiResult<Boolean>> unblockBlockedUsers(@PathVariable Long id){
         return ResponseEntity.ok(adminService.unblockBlockedUsers(id));
     }
+/*
 
     @GetMapping("/users-uzbekistan")
     public HttpEntity<ApiResult<List<User>>> usersUzbekistan(){
@@ -80,6 +84,10 @@ public class AdminController {
     public HttpEntity<ApiResult<List<User>>> usersTurkey(){
         return ResponseEntity.ok(adminService.usersTurkey());
     }
+*/
 
-
+    @GetMapping("/users/by-country")
+    public HttpEntity<ApiResult<List<User>>> users(@RequestParam Country country){
+        return ResponseEntity.ok(adminService.all(country));
+    }
 }

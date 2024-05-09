@@ -3,6 +3,7 @@ package com.example.dominantsoftdevelopment.service.admin;
 import com.example.dominantsoftdevelopment.dto.ApiResult;
 import com.example.dominantsoftdevelopment.model.Product;
 import com.example.dominantsoftdevelopment.model.User;
+import com.example.dominantsoftdevelopment.model.enums.Country;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,4 +35,6 @@ public interface AdminService {
     ApiResult<List<User>> usersRussia();
 
     ApiResult<List<User>> usersTurkey();
+
+    ApiResult<List<User>> all(Country country);
 }

@@ -49,10 +49,10 @@ public class OrderServiceImpl implements OrderService {
             orderItem.setOrderId(order);
             orderItem.setProduct(product);
             orderItem.setPrice(product.getPrice());
-            orderItem.setProductCount(itemDTO.getProductCount());
+//            orderItem.setProductCount(itemDTO.getProductCount());
 
             orderItemRepository.save(orderItem);
-            totalPrice += (product.getPrice()*orderItem.getProductCount());
+            totalPrice += product.getPrice();
         }
         order.setTotalPrice(totalPrice);
         order.setCustomer(CommonUtils.getCurrentUserFromContext());
