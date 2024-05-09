@@ -65,6 +65,7 @@ public class AdminController {
     public HttpEntity<ApiResult<List<User>>> usersTajikistan(){
         return ResponseEntity.ok(adminService.usersTajikistan());
     }
+
     @GetMapping("/users-azerbaijan")
     public HttpEntity<ApiResult<List<User>>> usersAzerbaijan(){
         return ResponseEntity.ok(adminService.usersAzerbaijan());
